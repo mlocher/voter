@@ -43,12 +43,16 @@ app.get('/standings', function(req, res){
 	});
 });
 
-// right now displays a form for voting on seLinux
-// TODO remove
-app.get('/vote', function(req, res){
-	res.render('vote', {
-		title: "Vote"
-	});
+// TODO don't create element if a element with this name already exists
+// TODO convert to call this function via ajax
+app.post('/vote/new', function(req, res){
+	db.save(
+		{ item: req.body.item, votes: [ {name: 'Marko Locher', date: new Date()} ] },
+		function(db_err, db_res){
+			console.log(db_res);
+			res.redirect('/standings');
+		}
+	);
 })
 
 // TODO limit voting within time interval
@@ -56,8 +60,8 @@ app.post('/vote/:id', function(req, res){
 	db.get(req.params.id, function(db_err, db_doc){
 		db_doc.votes.push({name: req.body.name, date: new Date()})
 		db.save(db_doc._id, db_doc);
+		res.send({ _id: db_doc._id, item: db_doc.item, votes: db_doc.votes.length });
 	});
-  res.redirect('standings');
 })
 
 app.listen(3000);

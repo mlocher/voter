@@ -1,4 +1,8 @@
 h1= title
-ol
+ol#items
 	- for (var row in votes)
-		li.votes= votes[row].value.item
+		li.votes(id="#{votes[row].id}", data-votes=votes[row].value.votes) 
+			a(href="/vote/#{votes[row].id}",, class='vote')= votes[row].value.item
+	li.votes
+		form(action="/vote/new", method="post")
+			input(type="text", name="item")
