@@ -12,8 +12,8 @@ html
 						// TODO allow for name specification via form
 						$.post(e.target.href, { name: 'Marko Locher' }, function(res){
 							r = JSON.parse(res);
-							//$("li#"+r._id)[0].setAttribute('data-votes', r.votes);
-							$($("li#"+r._id).get(0)).data('votes', r.votes);
+							console.log(r);
+							$("li#"+r._id).data('votes', r.votes);
 							reorder();
 						});
 						return false;
@@ -25,14 +25,11 @@ html
 			function reorder() {
 				var li = new Array();
 				$('#items').children('li').each(function(e){
-					li.push($($('#items').children('li').get(e)));
+					li.push($('#items').children('li').get(e));
 				});
 				li.sort(function(a, b){
 					return $(b).data('votes') - $(a).data('votes');
 				});
-				for(var i = 1; i < li.length; i++){
-					$($('#items').get(0)).append(li[i]);
-				}
-				console.log(li[0].data('votes'));
+				$('#items').append(li);
 			}
 	body!= body

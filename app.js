@@ -60,7 +60,10 @@ app.post('/vote/:id', function(req, res){
 	db.get(req.params.id, function(db_err, db_doc){
 		db_doc.votes.push({name: req.body.name, date: new Date()})
 		db.save(db_doc._id, db_doc);
-		res.send({ _id: db_doc._id, item: db_doc.item, votes: db_doc.votes.length });
+		db.view('votes/rolling_14?key=CentOS', function(view_req, view_res){
+			console.log(view_res);
+			res.send({ _id: db_doc._id, item: db_doc.item, votes: view_res.votes });
+		});
 	});
 })
 
