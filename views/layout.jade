@@ -9,13 +9,9 @@ html
 				reorder();	
 				$(document).on({
 					click: function(e) { 
-						// TODO allow for name specification via form
-						$.post(e.target.href, { name: 'Marko Locher' }, function(res){
-							r = JSON.parse(res);
-							console.log(r);
-							$("li#"+r._id).data('votes', r.votes);
-							reorder();
-						});
+						$.ajax({ type: 'POST', url: e.target.href, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', 
+							success: function (r){ $("#"+r.item).data('votes', r.votes); reorder(); }, 
+							error: function(xhr, type) { console.log("An error occurred while doing the AJAX request!"); } });
 						return false;
 					},
 				}, 'a.vote');
@@ -24,12 +20,9 @@ html
 			// TODO implement in a better way
 			function reorder() {
 				var li = new Array();
-				$('#items').children('li').each(function(e){
-					li.push($('#items').children('li').get(e));
-				});
-				li.sort(function(a, b){
-					return $(b).data('votes') - $(a).data('votes');
-				});
+				$('#items').children('li').each(function(e){ li.push($('#items').children('li').get(e)); });
+				li.sort(function(a, b){ return $(b).data('votes') - $(a).data('votes'); });
 				$('#items').append(li);
 			}
 	body!= body
+	input#name(type="text",name="name")

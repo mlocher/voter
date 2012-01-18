@@ -6,7 +6,7 @@
 var express = require('express');
 var cradle = require('cradle');
 
-var db = new(cradle.Connection)().database('voter');
+var db = new(cradle.Connection)().database('votr');
 var app = module.exports = express.createServer();
 
 // Configuration
@@ -35,9 +35,10 @@ app.get('/', function(req, res){
 });
 
 app.get('/standings', function(req, res){
-	db.view('votes/rolling_14', function (db_err, db_res) {
+	db.view('by_item/rolling', { group_level: 1 }, function (db_err, db_res) {
+		console.log("View rolling standings");
 		res.render('rankings', {
-			title: "Rankings",
+			title: "Rankings over the last 14 days",
 			votes: db_res
 		});
 	});
@@ -45,7 +46,7 @@ app.get('/standings', function(req, res){
 
 // TODO don't create element if a element with this name already exists
 // TODO convert to call this function via ajax
-app.post('/vote/new', function(req, res){
+/*app.post('/vote/new', function(req, res){
 	db.save(
 		{ item: req.body.item, votes: [ {name: 'Marko Locher', date: new Date()} ] },
 		function(db_err, db_res){
@@ -53,19 +54,18 @@ app.post('/vote/new', function(req, res){
 			res.redirect('/standings');
 		}
 	);
-})
+})*/
 
 // TODO limit voting within time interval
+// TODO switch view based on display type
 app.post('/vote/:id', function(req, res){
-	db.get(req.params.id, function(db_err, db_doc){
-		db_doc.votes.push({name: req.body.name, date: new Date()})
-		db.save(db_doc._id, db_doc);
-		db.view('votes/rolling_14?key=CentOS', function(view_req, view_res){
-			console.log(view_res);
-			res.send({ _id: db_doc._id, item: db_doc.item, votes: view_res.votes });
+	db.save( { item: req.params.id, name: req.body.name, date: new Date() }, function (db_err, db_res) {
+		console.log("Added vote to database", { id: req.params.id, name: req.body.name });
+		db.view('by_item/rolling', { group_level: 1, key: [ req.params.id ] }, function (db_err, db_res){
+			res.send({ item:db_res[0].key[0], votes: db_res[0].value });
 		});
 	});
-})
+});
 
 app.listen(3000);
 console.log("Express server listening on port %d", app.address().port);
