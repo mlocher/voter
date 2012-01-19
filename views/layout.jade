@@ -15,6 +15,15 @@ html
 						return false;
 					},
 				}, 'a.vote');
+				$('form#vote').on({
+					submit: function(e) {
+						$.ajax({ type: 'POST', url: '/vote/' + document.vote.item.value, 
+							data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', 
+							success: function (r){ $("#"+r.item).data('votes', r.votes); document.vote.item.value = ""; reorder(); }, 
+							error: function(xhr, type) { console.log("An error occurred while doing the AJAX request!"); } });
+						return false;
+					}
+				});
 			});
 			
 			// TODO implement in a better way
@@ -25,4 +34,6 @@ html
 				$('#items').append(li);
 			}
 	body!= body
+	
 	input#name(type="text",name="name")
+	

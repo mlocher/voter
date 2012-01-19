@@ -4,5 +4,7 @@ ol#items
 		li(id="#{votes[row].key[0]}", data-votes=votes[row].value) 
 			a.vote(href="/vote/#{votes[row].key[0]}")= votes[row].key[0]
 	li.votes
-		form(action="/vote/new", method="post")
+		form#vote(action="/vote/", method="post", name="vote")
 			input(type="text", name="item")
+			
+	

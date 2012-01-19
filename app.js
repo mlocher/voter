@@ -44,22 +44,10 @@ app.get('/standings', function(req, res){
 	});
 });
 
-// TODO don't create element if a element with this name already exists
-// TODO convert to call this function via ajax
-/*app.post('/vote/new', function(req, res){
-	db.save(
-		{ item: req.body.item, votes: [ {name: 'Marko Locher', date: new Date()} ] },
-		function(db_err, db_res){
-			console.log(db_res);
-			res.redirect('/standings');
-		}
-	);
-})*/
-
 // TODO limit voting within time interval
 // TODO switch view based on display type
 app.post('/vote/:id', function(req, res){
-	db.save( { item: req.params.id, name: req.body.name, date: new Date() }, function (db_err, db_res) {
+	db.save( { item: req.params.id || req.body.item, name: req.body.name, date: new Date() }, function (db_err, db_res) {
 		console.log("Added vote to database", { id: req.params.id, name: req.body.name });
 		db.view('by_item/rolling', { group_level: 1, key: [ req.params.id ] }, function (db_err, db_res){
 			res.send({ item:db_res[0].key[0], votes: db_res[0].value });
