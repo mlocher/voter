@@ -1,4 +1,9 @@
-h1= title
+p Hi, 
+	input#name(type="text",name="name")
+	| this are the
+	
+h1 Rankings
+h2 over the last 14 days
 ol#items
 	- for (var row in votes)
 		li(id="#{votes[row].key[0]}", data-votes=votes[row].value) 
@@ -7,4 +12,4 @@ ol#items
 		form#vote(action="/vote/", method="post", name="vote")
 			input(type="text", name="item")
 			
-	
+p Click on any to vote for it, or Enter a new one in the field at the end!

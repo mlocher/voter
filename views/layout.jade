@@ -17,9 +17,15 @@ html
 				}, 'a.vote');
 				$('form#vote').on({
 					submit: function(e) {
+						// TODO add li element if it does not already exist
 						$.ajax({ type: 'POST', url: '/vote/' + document.vote.item.value, 
 							data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', 
-							success: function (r){ $("#"+r.item).data('votes', r.votes); document.vote.item.value = ""; reorder(); }, 
+							success: function (r){ 
+								if($("#"+r.item).size > 0) { $("#"+r.item).data('votes', r.votes); }
+								else { $('#items').append("<li id='"+ r.item + "' data-votes='"+ r.votes +"'><a href='/vote/"+ r.item + "' class='vote'>"+ r.item + "</a></li>") }
+								document.vote.item.value = ""; 
+								reorder(); 
+							}, 
 							error: function(xhr, type) { console.log("An error occurred while doing the AJAX request!"); } });
 						return false;
 					}
@@ -34,6 +40,5 @@ html
 				$('#items').append(li);
 			}
 	body!= body
-	
-	input#name(type="text",name="name")
+
 	
