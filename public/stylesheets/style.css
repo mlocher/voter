@@ -23,6 +23,12 @@ li {
 	margin-bottom: .3em;
 }
 
+.number {
+	font-size: .6em;
+	color: grey;
+	padding-left: 1em;
+}
+
 input[type=text] {
 	margin: .3em;
 	padding: 2pt .3em 0 .3em;

@@ -8,6 +8,7 @@ ol#items
 	- for (var row in votes)
 		li(id="#{votes[row].key[0]}", data-votes=votes[row].value) 
 			a.vote(href="/vote/#{votes[row].key[0]}")= votes[row].key[0]
+				span.number= votes[row].value
 	li.votes
 		form#vote(action="/vote/", method="post", name="vote")
 			input(type="text", name="item")
