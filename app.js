@@ -13,10 +13,12 @@ var app = module.exports = express.createServer();
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
+  app.use(express.static(__dirname + '/public'));
   app.use(express.bodyParser());
+	app.use(express.cookieParser());
+	app.use(express.session({ secret: "damooQuah6aeDo8Oiquieyohlaichung" }));
   app.use(express.methodOverride());
   app.use(app.router);
-  app.use(express.static(__dirname + '/public'));
 });
 
 app.configure('development', function(){
@@ -29,17 +31,13 @@ app.configure('production', function(){
 
 // Routes
 app.get('/', function(req, res){
-  res.render('index', {
-    title: 'Express'
-  });
-});
-
-app.get('/standings', function(req, res){
+	if (typeof(req.session.name) == 'undefined') { req.session.name = ''; }
 	db.view('by_item/rolling', { group_level: 1 }, function (db_err, db_res) {
 		console.log("View rolling standings");
-		res.render('rankings', {
+		res.render('index', {
 			title: "Rankings over the last 14 days",
-			votes: db_res
+			votes: db_res, 
+			name: req.session.name
 		});
 	});
 });
@@ -47,6 +45,7 @@ app.get('/standings', function(req, res){
 // TODO limit voting within time interval
 // TODO switch view based on display type
 app.post('/vote/:id', function(req, res){
+	req.session.name = (req.body.name != 'Unknown' ? req.body.name : '');
 	db.save( { item: req.params.id || req.body.item, name: req.body.name, date: new Date() }, function (db_err, db_res) {
 		console.log("Added vote to database", { id: req.params.id, name: req.body.name });
 		db.view('by_item/rolling', { group_level: 1, key: [ req.params.id ] }, function (db_err, db_res){

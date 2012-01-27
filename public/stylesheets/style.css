@@ -7,6 +7,7 @@ body {
 p {
 	margin: 0;
 	line-height: 1.4em;
+	font-size: .8em;
 }
 
 h1 {
@@ -19,20 +20,28 @@ h2 {
 	color: grey;
 }
 
+ol {
+	margin: 2em 0;
+}
+
 li {
 	margin-bottom: .3em;
 }
 
-.number {
+li::after {
+	content: attr(data-votes);
 	font-size: .6em;
 	color: grey;
-	padding-left: 1em;
+	padding-left: .6em;
+	
+}
+
+.number {
 }
 
 input[type=text] {
 	margin: .3em;
 	padding: 2pt .3em 0 .3em;
-	background: rgb(250, 250, 200);
 	font: 1em Georgia, Times, serif;
 	border: 1pt dashed grey;
 	border-width: 0 0 1pt 0;
@@ -42,7 +51,7 @@ input[type=text] {
 	
 }
 input[type=text]#name {
-	
+	margin-right: 0;
 }
 
 :link, :visited {
@@ -51,7 +60,7 @@ input[type=text]#name {
 	padding: 5pt;
 }
 
-:link:hover, :visited:hover {
+:link:hover, :visited:hover, :link:focus, :visited:focus {
 	background: rgb(250, 250, 200);
 	padding: 4pt;
 	border: 1pt solid rgb(250, 250, 200);

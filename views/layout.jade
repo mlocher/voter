@@ -9,24 +9,16 @@ html
 				reorder();	
 				$(document).on({
 					click: function(e) { 
-						$.ajax({ type: 'POST', url: e.target.href, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', 
-							success: function (r){ $("#"+r.item).data('votes', r.votes); reorder(); }, 
-							error: function(xhr, type) { console.log("An error occurred while doing the AJAX request!"); } });
+						$.ajax({ type: 'POST', url: e.target.href, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', success: update, error: error });
 						return false;
 					},
 				}, 'a.vote');
 				$('form#vote').on({
 					submit: function(e) {
-						// TODO add li element if it does not already exist
 						$.ajax({ type: 'POST', url: '/vote/' + document.vote.item.value, 
 							data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', 
-							success: function (r){ 
-								if($("#"+r.item).size > 0) { $("#"+r.item).data('votes', r.votes); }
-								else { $('#items').append("<li id='"+ r.item + "' data-votes='"+ r.votes +"'><a href='/vote/"+ r.item + "' class='vote'>"+ r.item + "</a></li>") }
-								document.vote.item.value = ""; 
-								reorder(); 
-							}, 
-							error: function(xhr, type) { console.log("An error occurred while doing the AJAX request!"); } });
+							success: function (r){ $("#"+r.item).size() > 0 ? update(r) : append(r); document.vote.item.value = ""; }, 
+							error: error });
 						return false;
 					}
 				});
@@ -39,6 +31,10 @@ html
 				li.sort(function(a, b){ return $(b).data('votes') - $(a).data('votes'); });
 				$('#items').append(li);
 			}
+			
+			function update(r) { $("#"+r.item).data('votes', r.votes); reorder();  }
+			function append(r) { $('#items').append("<li id='"+ r.item + "' data-votes='"+ r.votes +"'><a href='/vote/"+ r.item + "' class='vote'>"+ r.item + "</a></li>"); reorder(); }
+			function error(xhr, type) { console.log("An error occurred while doing the AJAX request!"); }
 	body!= body
 
 	

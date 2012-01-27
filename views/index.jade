@@ -1,2 +1,15 @@
-h1= title
-p Welcome to #{title}
+p Hi 
+	input#name(type="text",name="name",value="#{name}")
+	|, these are the
+	
+h1 Rankings
+h2 over the last 14 days
+ol#items
+	- for (var row in votes)
+		li(id="#{votes[row].key[0]}", data-votes=votes[row].value) 
+			a.vote(href="/vote/#{votes[row].key[0]}")= votes[row].key[0]
+	li.votes
+		form#vote(action="/vote/", method="post", name="vote")
+			input(type="text", name="item")
+			
+p Click on any to vote for it, or enter a new one in the field at the bottom! Don't forget to add your name at the top, if you want to include it!
