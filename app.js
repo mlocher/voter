@@ -33,7 +33,6 @@ app.configure('production', function(){
 app.get('/', function(req, res){
 	if (typeof(req.session.name) == 'undefined') { req.session.name = ''; }
 	db.view('by_item/rolling', { group_level: 1 }, function (db_err, db_res) {
-		console.log("View rolling standings");
 		res.render('index', {
 			title: "Rankings over the last 14 days",
 			votes: db_res, 
