@@ -6,7 +6,37 @@
 var express = require('express');
 var cradle = require('cradle');
 
-var db = new(cradle.Connection)().database('votr');
+var db = new(cradle.Connection)().database('votr', { 
+	auth: { username: 'marko', password: 'password' }
+});
+//var db = new(cradle.Connection)('https://couch.io', 443, {
+//	auth: { username: 'john', password: 'fha82l' }
+//});
+
+db.exists(function (err, exists) {
+	if (err) {
+		console.log('error', err);
+	} else if (exists) {
+		console.log('Database already exists. Nothing to do here!');
+	} else {
+		console.log('Creating database and design documents.');
+		db.create();
+		db.save('_design/by_item', {
+	   "language": "javascript",
+	   "views": {
+	       "total": {
+	           "map": "function(d) { if(d.item) { emit([d.item, d.name], 1); } }",
+	           "reduce": "function(k,v) { return sum(v); }"
+	       },
+	       "rolling": {
+	           "map": "function(d) { if(d.item) { s = new Date(new Date().setDate(new Date().getDate() - 14)); v = new Date(d.date); if(s<v) { emit([d.item], 1); } } }",
+	           "reduce": "function(k,v) { return sum(v); }"
+	       }
+	   }
+		});
+	}
+});
+
 var app = module.exports = express.createServer();
 
 // Configuration
