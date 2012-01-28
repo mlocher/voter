@@ -1,8 +1,12 @@
 body {
+	font: 18pt Georgia, Times, serif;
+	background: url(/images/blackboard_black.jpg) top left;
+}
+#container {
 	width: 15em;
 	margin: 0 auto;
 	padding: 2em;
-	font: 18pt Georgia, Times, serif;
+	background: white;
 }
 p {
 	margin: 0;

@@ -35,6 +35,7 @@ html
 			function update(r) { $("#"+r.item).data('votes', r.votes); reorder();  }
 			function append(r) { $('#items').append("<li id='"+ r.item + "' data-votes='"+ r.votes +"'><a href='/vote/"+ r.item + "' class='vote'>"+ r.item + "</a></li>"); reorder(); }
 			function error(xhr, type) { console.log("An error occurred while doing the AJAX request!"); }
-	body!= body
+	body
+		div#container!= body
 
 	
