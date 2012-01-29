@@ -1,10 +1,12 @@
+@import url(http://fonts.googleapis.com/css?family=Stoke);
+
 body {
-	font: 18pt Georgia, Times, serif;
-	background: url(/images/blackboard_black.jpg) top left;
+	font: 18pt Stoke, Georgia, serif;
+	background: url(/images/blackboard_black.jpg) top left fixed no-repeat;
 }
 #container {
-	width: 15em;
-	margin: 0 auto;
+	width: 16em;
+	margin: 2em auto;
 	padding: 2em;
 	background: white;
 }
@@ -12,6 +14,9 @@ p {
 	margin: 0;
 	line-height: 1.4em;
 	font-size: .8em;
+}
+p.small {
+	font-size: .6em;
 }
 
 h1 {
@@ -46,13 +51,13 @@ li::after {
 input[type=text] {
 	margin: .3em;
 	padding: 2pt .3em 0 .3em;
-	font: 1em Georgia, Times, serif;
+	font: 1em Stoke, Georgia, serif;
 	border: 1pt dashed grey;
 	border-width: 0 0 1pt 0;
 	border-radius: .3em .3em 0 0;
 	-moz-border-radius: .3em .3em 0 0;
 	-webkit-border-radius: .3em .3em 0 0;
-	
+	width: 10em;
 }
 input[type=text]#name {
 	margin-right: 0;
