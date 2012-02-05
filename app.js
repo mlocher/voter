@@ -17,6 +17,7 @@ var db = new(cradle.Connection)().database('votr', {
 fayeServer = new faye.NodeAdapter({ mount: '/faye', timeout: 45 });
 var fayeClient = new faye.Client('http://localhost:3000/faye');
 
+// TODO does not work :(
 db.exists(function (err, exists) {
 	if (err) {
 		console.log('error', err);
@@ -79,7 +80,6 @@ app.get('/', function(req, res){
 	});
 });
 
-// TODO limit voting within time interval
 // TODO switch view based on display type
 app.post('/vote/:id', function(req, res){
 	req.session.name = (req.body.name != 'Unknown' ? req.body.name : '');
@@ -90,6 +90,14 @@ app.post('/vote/:id', function(req, res){
 			res.cookie('voter_votes', 1);
 			res.send({ item: db_res[0].key[0], votes: db_res[0].value });
 		});
+	});
+});
+
+app.get('/autocomplete/:filter?', function(req, res){
+	db.view('by_item/total',  { group_level: 1 }, function (db_err, db_res){
+		var items = Array();
+		for(i in db_res){ items[i] = db_res[i].key[0]; }
+		res.send(items);
 	});
 });
 
