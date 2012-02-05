@@ -4,21 +4,25 @@ html
 		title= title
 		link(rel='stylesheet', href='/stylesheets/style.css')
 		script(src='/javascripts/zepto.js')
+		script(src='/faye.js')
 		script(type='text/javascript)
 			$(document).ready(function(){
+				// faye
+				var fayeClient = new Faye.Client('http://localhost:3000/faye', { timeout: 10 });
+				fayeClient.subscribe('/votes', function(r) {
+					$("#"+r.item).size() > 0 ? update(r) : append(r); document.vote.item.value = "";
+				});
+			
 				reorder();	
 				$(document).on({
 					click: function(e) { 
-						$.ajax({ type: 'POST', url: e.target.href, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', success: update, error: error });
+						$.ajax({ type: 'POST', url: e.target.href, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', error: error });
 						return false;
 					},
 				}, 'a.vote');
 				$('form#vote').on({
 					submit: function(e) {
-						$.ajax({ type: 'POST', url: '/vote/' + document.vote.item.value, 
-							data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', 
-							success: function (r){ $("#"+r.item).size() > 0 ? update(r) : append(r); document.vote.item.value = ""; }, 
-							error: error });
+						$.ajax({ type: 'POST', url: '/vote/' + document.vote.item.value, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', error: error });
 						return false;
 					}
 				});

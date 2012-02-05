@@ -5,6 +5,7 @@
 
 var express = require('express');
 var cradle = require('cradle');
+var faye = require('faye');
 
 var db = new(cradle.Connection)().database('votr', { 
 	auth: { username: 'marko', password: 'password' }
@@ -12,6 +13,9 @@ var db = new(cradle.Connection)().database('votr', {
 //var db = new(cradle.Connection)('https://couch.io', 443, {
 //	auth: { username: 'john', password: 'fha82l' }
 //});
+
+fayeServer = new faye.NodeAdapter({ mount: '/faye', timeout: 45 });
+var fayeClient = new faye.Client('http://localhost:3000/faye');
 
 db.exists(function (err, exists) {
 	if (err) {
@@ -31,11 +35,8 @@ db.exists(function (err, exists) {
 	       "rolling": {
 	           "map": "function(d) { if(d.item) { s = new Date(new Date().setDate(new Date().getDate() - 14)); v = new Date(d.date); if(s<v) { emit([d.item], 1); } } }",
 	           "reduce": "function(k,v) { return sum(v); }"
-	       }
-	   }
-		});
-	}
-});
+		}}});
+}});
 
 var app = module.exports = express.createServer();
 
@@ -85,11 +86,13 @@ app.post('/vote/:id', function(req, res){
 	db.save( { item: req.params.id || req.body.item, name: req.body.name, date: new Date() }, function (db_err, db_res) {
 		console.log("Added vote to database", { id: req.params.id, name: req.body.name });
 		db.view('by_item/rolling', { group_level: 1, key: [ req.params.id ] }, function (db_err, db_res){
+			fayeClient.publish('/votes', { item: db_res[0].key[0], votes: db_res[0].value });
 			res.cookie('voter_votes', 1);
 			res.send({ item: db_res[0].key[0], votes: db_res[0].value });
 		});
 	});
 });
 
+fayeServer.attach(app);
 app.listen(3000);
 console.log("Express server listening on port %d", app.address().port);
