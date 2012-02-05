@@ -60,8 +60,15 @@ app.configure('production', function(){
 });
 
 // Routes
+// TODO Rewrite setting of cookies, right now it depends on reloading the 
+// front page
 app.get('/', function(req, res){
-	if (typeof(req.session.name) == 'undefined') { req.session.name = ''; }
+	console.log("Cookies:", req.cookies)
+	if (typeof(req.session.name) == 'undefined') { 
+		 req.session.name = (req.cookies.voter_name ? req.cookies.voter_name : ''); 
+	} else {
+		res.cookie('voter_name', req.session.name, { maxAge: 900000 });
+	}
 	db.view('by_item/rolling', { group_level: 1 }, function (db_err, db_res) {
 		res.render('index', {
 			title: "Rankings over the last 14 days",
@@ -78,6 +85,7 @@ app.post('/vote/:id', function(req, res){
 	db.save( { item: req.params.id || req.body.item, name: req.body.name, date: new Date() }, function (db_err, db_res) {
 		console.log("Added vote to database", { id: req.params.id, name: req.body.name });
 		db.view('by_item/rolling', { group_level: 1, key: [ req.params.id ] }, function (db_err, db_res){
+			res.cookie('voter_votes', 1);
 			res.send({ item: db_res[0].key[0], votes: db_res[0].value });
 		});
 	});
