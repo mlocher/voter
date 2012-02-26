@@ -1,15 +1,20 @@
 {
     "name": "voter",
 	"description": "A simple voting application based on node, express and CouchDB",
-	"keywords": [],
+	"keywords": ["node.js", "couchdb", "faye", "vote"],
 	"version": "0.0.1",
 	"homepage": "http://mlocher.github.com/voter",
 	"reqpository": "git://github.com/mlocher/voter.git",
 	"author": "Marko Locher <marko@locher.at>",
+	"license": "MIT",
 	"private": true,
 	"dependencies": {
+		"express": ">=2.5.8",
     	"jade": ">= 0.0.1",
 		"cradle": ">= 0.5.7",
 		"faye":	">= 0.7.1"
+	},
+	"engine": {
+		"node": ">=0.6"
 	}
 }
