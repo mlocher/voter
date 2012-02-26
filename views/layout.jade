@@ -1,4 +1,4 @@
-!!!
+!!! 5
 html
 	head
 		title= title
@@ -7,33 +7,43 @@ html
 		script(src='/faye.js')
 		script(type='text/javascript)
 			$(document).ready(function(){
-				// faye
+				// faye (live updates)
 				var fayeClient = new Faye.Client('http://localhost:3000/faye', { timeout: 10 });
-				fayeClient.subscribe('/votes', function(r) {
-					$("#"+r.item).size() > 0 ? update(r) : append(r); document.vote.item.value = "";
-				});
-			
-				reorder();	
-				$(document).on({
-					click: function(e) { 
-						$.ajax({ type: 'POST', url: e.target.href, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', error: error });
-						return false;
-					},
-				}, 'a.vote');
-				$('form#vote').on({
-					submit: function(e) {
-						$.ajax({ type: 'POST', url: '/vote/' + document.vote.item.value, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', error: error });
-						return false;
-					}
-				});
+				fayeClient.subscribe('/votes', function(r) { $("#"+r.item).size() > 0 ? update(r) : append(r); });
+				
+				// event listeners
+				$(document).on({ click: function(e) {  $.ajax({ type: 'POST', url: e.target.href, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', error: error }); return false; }}, 'a.vote');
+				$('form#vote').on({ submit: function(e) { $.ajax({ type: 'POST', url: '/vote/' + document.vote.item.value, data: { name: $('#name').get(0).value || 'Unknown' }, dataType: 'json', error: error }); document.vote.item.value = ""; return false; }});
+				$('form#vote input[type=text]').on({ keyup: function(e) { autocomplete(); }});
+				
+				// order the elements
+				reorder();
 			});
 			
 			// TODO implement in a better way
 			function reorder() {
 				var li = new Array();
 				$('#items').children('li').each(function(e){ li.push($('#items').children('li').get(e)); });
-				li.sort(function(a, b){ return $(b).data('votes') - $(a).data('votes'); });
+				li.sort(function(a, b){ 
+					d = $(b).data('votes') - $(a).data('votes'); 
+					if(d != 0) { return d; }
+					return -1;
+				});
 				$('#items').append(li);
+			}
+			
+			var data = 'undefined';
+			function autocomplete() {
+				if(data == 'undefined'){
+					console.log('Getting autocomplete data');
+					$.getJSON('/autocomplete', function(d) { data = d;  do_complete(); });
+				} else { do_complete(); }
+				
+				function do_complete(){
+					var i = $('form#vote input[type=text]').get(0).value.toLowerCase();
+					c = data.filter(function(v){ return v.toLowerCase().indexOf(i) != -1; });
+					console.log(c);
+				}
 			}
 			
 			function update(r) { $("#"+r.item).data('votes', r.votes); reorder();  }
