@@ -6,4 +6,4 @@ At the moment it simply displays a list of all the votes from most voted for to 
 
 Installation should be straightforward, you obviously need node and couchdb, install the dependencies via `npm install`, set up the database and adjust the database configuration in app.js
 
-If you have any questions, feel free to ask me at marko.locher@gmail.com
+If you have any questions, feel free to ask me at marko@locher.at
